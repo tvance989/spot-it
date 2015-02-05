@@ -1,4 +1,23 @@
+#!/usr/bin/env sage -python
+
+import copy
 import random
+import sys
+from sage.all import *
+
+
+
+# Sage Method
+print
+print 'Sage Method'
+print
+
+sol = sage.combinat.designs.block_design.projective_plane(7)
+
+for row in sol.incidence_matrix().rows():
+    print(row)
+
+
 
 # Tucker Method
 print 'Tucker Method'
@@ -82,29 +101,48 @@ numCards = 5
 symbols = set(['a','b','c','d','e','f','g','h','i','j','k'])
 
 def chooseFromAvailable(card, available):
-    print'available',available
     choice = random.sample(available,1)[0]
     card.append(choice)
+
     available -= set(choice)
-    print card
 
     if len(card) < symbolsPerCard:
-        print'choosing again'
         return chooseFromAvailable(card, available)
     else:
-        print'returning card',card
         return card
 
-def matchPreviousCards(card, cardsToMatch):
-    pass
+def matchPreviousCards(card, cardsToMatch, available):
+    print'available',available
+    poppedCard = cardsToMatch.pop()
+    print'popped',poppedCard
+    choice = random.choice(list(set(poppedCard) & available))
+    card.append(choice)
+
+    available -= set(poppedCard)
+
+    if len(cardsToMatch) > 0:
+        return matchPreviousCards(card, cardsToMatch, available)
+    else:
+        return card
 
 cards = []
 for i in range(numCards):
+    print
+    print'CARD',i
     card = []
-    cardsToMatch = cards
-    card = matchPreviousCards(card, cardsToMatch)
-    card = chooseFromAvailable(card, symbols)
+
+    cardsToMatch = cards[:]
+    available = copy.deepcopy(symbols)
+
+    if len(cardsToMatch) > 0:
+        print 'matching'
+        card = matchPreviousCards(card, cardsToMatch, available)
+
+    print 'choosing'
+    card = chooseFromAvailable(card, available)
+
     cards.append(card)
+    print card
 
 print
 print 'cards'
