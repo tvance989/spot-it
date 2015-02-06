@@ -21,8 +21,8 @@ var files = [
 
 var canvas = new fabric.Canvas('canvas');
 
-var radius = 250;
-var imgSize = radius/3;
+var radius = 200;
+var imgSize = radius/2;
 
 // Draw card border
 canvas.add(new fabric.Circle({
@@ -51,33 +51,41 @@ for (i in angles) {
 
 // Draw
 for (i in coords) {
-  canvas.add(new fabric.Rect({
-    originX:'center',
-    originY:'center',
-    left: coords[i].x,
-    top: coords[i].y,
-    width: imgSize,
-    height: imgSize,
-    angle: 360*Math.random(),
-    fill: '#f33'
-  }).scale(Math.random() * .5 + .75));
-  // continue;
+  if (false) {
+    canvas.add(new fabric.Rect({
+      originX:'center',
+      originY:'center',
+      left: coords[i].x,
+      top: coords[i].y,
+      width: imgSize,
+      height: imgSize,
+      angle: 360*Math.random(),
+      fill: '#f33'
+    }).scale(Math.random() * .5 + .75));
+  }
 
-  fabric.Image.fromURL('img/'+files[i], function(img) {
+  drawImg(files[i], coords[i]);
+}
+
+function drawImg(file, coords) {
+  fabric.Image.fromURL('img/'+file, function(img) {
+    // Proportionally fit the imgSize box
     w = img.getWidth();
     h = img.getHeight();
     if (w > h) {
       newWidth = imgSize;
       newHeight = imgSize - imgSize * (h/w);
-    } else {
+    } else if (w < h) {
       newWidth = imgSize - imgSize * (w/h);
       newHeight = imgSize;
+    } else {
+      newWidth = newHeight = imgSize;
     }
     canvas.add(img.set({
       originX: 'center',
       originY: 'center',
-      left: coords[i].x,//.why doesn't this work?
-      top: coords[i].y,//.why doesn't this work?
+      left: coords.x,
+      top: coords.y,
       width: newWidth,
       height: newHeight,
       angle: 360*Math.random()
